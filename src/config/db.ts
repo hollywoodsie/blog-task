@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize-typescript';
-import { User} from '../models/User'; 
-import { Post} from '../models/Post'; 
+import { User} from '../user/user.model'; 
+import { Post} from '../post/post.model'; 
 
 const sequelize = new Sequelize({
 
