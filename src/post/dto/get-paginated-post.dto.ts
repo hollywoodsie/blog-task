@@ -1,15 +1,15 @@
 import { Expose } from 'class-transformer';
-import { Transform } from 'class-transformer';
-import { IsInt } from 'class-validator';
+
+import { IsInt, IsOptional } from 'class-validator';
 
 export class GetPaginatedPostsDto {
   @Expose()
-  @Transform(({ value }) => Number(value))
   @IsInt()
+  @IsOptional()
   page: number;
 
   @Expose()
-  @Transform(({ value }) => Number(value))
   @IsInt()
+  @IsOptional()
   pageSize: number;
 }
