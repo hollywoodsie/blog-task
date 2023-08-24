@@ -56,21 +56,15 @@ class PostService {
     userId: number,
     userRole: UserRole
   ): Promise<number> {
-    try {
-      const where: WhereOptions<Attributes<Post>> = { id: postId };
-      console.log(postId, userId, userRole);
+    const where: WhereOptions<Attributes<Post>> = { id: postId };
 
-      if (userRole === UserRole.Admin) {
-        where.isHidden = false;
-      } else {
-        where.authorId = userId;
-      }
-      return Post.destroy({ where });
-    } catch (error) {
-      console.error('Error deleting post:', error);
-      return 0;
+    if (userRole === UserRole.Admin) {
+      where.isHidden = false;
+    } else {
+      where.authorId = userId;
     }
+    return Post.destroy({ where });
   }
 }
 
-export default new PostService();
+export const postService = new PostService();
