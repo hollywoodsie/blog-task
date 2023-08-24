@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import postController from '../post/post.controller';
+import { postController } from '../post/post.controller';
 import { validationMiddleware } from '../middlewares/validation.middleware';
 import { CreatePostDto } from './dto/create-post.dto';
 import { ReqParamsDto } from './dto/request-params.dto';
@@ -19,20 +19,20 @@ router.get(
 );
 router.get(
   '/:id',
-  // validationMiddleware({ paramsDto: ReqParamsDto }),
+  validationMiddleware({ paramsDto: ReqParamsDto }),
   postController.getOneById.bind(postController)
 );
 router.put(
   '/:id',
-  // validationMiddleware({
-  //   paramsDto: ReqParamsDto,
-  //   bodyDto: UpdatePostDto,
-  // }),
+  validationMiddleware({
+    paramsDto: ReqParamsDto,
+    bodyDto: CreatePostDto,
+  }),
   postController.update.bind(postController)
 );
 router.delete(
   '/:id',
-  // validationMiddleware({ paramsDto: ReqParamsDto }),
+  validationMiddleware({ paramsDto: ReqParamsDto }),
   postController.delete.bind(postController)
 );
 
