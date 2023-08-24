@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { Secret } from 'jsonwebtoken';
 import { User } from '../user/user.model';
-import UserService from '../user/user.service';
+import { userService } from '../user/user.service';
 import DecodedToken from '../auth/types';
-const secretKey = 'your-secret-key';
+import { UnauthorizedException } from '../errors/unauthorized.exception';
+
+const JWT_SECRET_KEY = process.env.JWT_SECRET as Secret;
 
 const jwtAuthMiddleware = async (
   req: Request,
@@ -13,24 +15,23 @@ const jwtAuthMiddleware = async (
   const authorizationHeader = req.header('Authorization');
 
   if (!authorizationHeader) {
-    return res.status(401).json({ message: 'Access denied. Token missing.' });
+    throw new UnauthorizedException('Access denied. Invalid token.');
   }
 
   const token = authorizationHeader.substring(7);
 
   try {
-    const decoded = jwt.verify(token, secretKey) as DecodedToken;
-    const user: User | null = await UserService.findOneById(decoded.id);
+    const decoded = jwt.verify(token, JWT_SECRET_KEY) as DecodedToken;
+    const user: User | null = await userService.findOneById(decoded.id);
 
     if (!user) {
-      return res.status(401).json({ message: 'Access denied. Invalid token.' });
+      throw new UnauthorizedException('Access denied. Invalid token.');
     }
 
     req.user = user;
     next();
   } catch (error) {
-    console.log(error);
-    return res.status(401).json({ message: 'Access denied. Invalid token.' });
+    throw new UnauthorizedException('Access denied. Invalid token.');
   }
 };
 

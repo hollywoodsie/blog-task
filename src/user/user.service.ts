@@ -27,5 +27,4 @@ class UserService {
     return User.findByPk(id);
   }
 }
-
-export default new UserService();
+export const userService = new UserService();
