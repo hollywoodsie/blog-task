@@ -30,7 +30,6 @@ class PostController {
     const userId = req.user!.id;
     const page = Number(req.query.page) || DEFAULT_PAGE;
     const pageSize = Number(req.query.pageSize) || DEFAULT_PAGE_SIZE;
-    console.log(page, pageSize);
 
     if (isNaN(page) || isNaN(pageSize) || page <= 0 || pageSize <= 0) {
       throw new BadRequestException('Invalid query parameters');
@@ -60,7 +59,8 @@ class PostController {
     res: Response
   ): Promise<void> {
     const postId = Number(req.params.id);
-    const post = await postService.getById(postId);
+    const { id: userId } = req.user!;
+    const post = await postService.getById(postId, userId);
 
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -74,14 +74,18 @@ class PostController {
     res: Response
   ): Promise<void> {
     const { id: postId } = req.params;
+    const { id: userId } = req.user!;
     const updateData: Partial<CreatePostDto> = req.body;
     const [updatedRowsCount, updatedPosts] = await postService.update(
       postId,
-      updateData
+      updateData,
+      userId
     );
 
     if (!updatedRowsCount) {
-      throw new NotFoundException('Post not found');
+      throw new NotFoundException(
+        'Post not found or you do not have permission to update'
+      );
     }
     res.status(200).json(updatedPosts);
   }

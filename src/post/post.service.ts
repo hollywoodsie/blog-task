@@ -35,19 +35,28 @@ class PostService {
     return { items, totalItems: count };
   }
 
-  public async getById(id: number): Promise<Post | null> {
-    const post = await Post.findByPk(id);
+  public async getById(id: number, userId: number): Promise<Post | null> {
+    const post = await Post.findOne({
+      where: {
+        id,
+        [Op.or]: [{ isHidden: false }, { authorId: userId }],
+      },
+    });
+
     return post;
   }
 
   public async update(
     id: number,
-    updateData: Partial<CreatePostDto>
+    updateData: Partial<CreatePostDto>,
+    userId: number
   ): Promise<[number, Post[]]> {
     const [updatedRowsCount, updatedPosts] = await Post.update(updateData, {
-      where: { id },
+      where: { id, [Op.or]: { authorId: userId } },
+
       returning: true,
     });
+
     return [updatedRowsCount, updatedPosts];
   }
 
