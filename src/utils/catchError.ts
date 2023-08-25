@@ -1,21 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import { HttpException } from '../errors/http.exception';
 import { UniqueConstraintError, BaseError as DatabaseError } from 'sequelize';
-
-export function CatchError(
-  target: unknown,
-  propertyKey: string,
-  descriptor: PropertyDescriptor
-) {
-  const originalMethod = descriptor.value as (...args: any[]) => any;
-
-  descriptor.value = async function (
+export function catchError(callback: (...args: any[]) => any) {
+  return async function (
+    this: any,
     req: Request,
     res: Response,
     next: NextFunction
   ) {
     try {
-      await originalMethod.call(this, req, res, next);
+      await callback.call(this, req, res, next);
     } catch (error) {
       console.error('An error occurred:', error);
 
@@ -32,6 +26,15 @@ export function CatchError(
       handleGenericError(res);
     }
   };
+}
+export function CatchError(
+  target: unknown,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+) {
+  const originalMethod = descriptor.value as (...args: any[]) => any;
+
+  descriptor.value = catchError(originalMethod);
 }
 
 function handleHttpException(res: Response, exception: HttpException) {
