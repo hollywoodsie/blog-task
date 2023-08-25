@@ -13,12 +13,7 @@ function main() {
 
   app.use(express.json());
   app.use('/api/users', jwtAuthMiddleware, userRoutes);
-  app.use(
-    '/api/posts',
-    jwtAuthMiddleware,
-
-    postRoutes
-  );
+  app.use('/api/posts', jwtAuthMiddleware, postRoutes);
   app.use('/api/auth', authRoutes);
 
   app.listen(port, () => {
