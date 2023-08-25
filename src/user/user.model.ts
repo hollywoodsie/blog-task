@@ -7,7 +7,7 @@ export enum UserRole {
   Admin = 'admin',
 }
 
-@Table
+@Table({ tableName: 'user' })
 export class User extends Model {
   @Column({
     type: DataType.INTEGER,
