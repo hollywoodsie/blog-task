@@ -2,7 +2,7 @@ import { QueryInterface, DataTypes } from 'sequelize';
 
 export = {
   up: async (queryInterface: QueryInterface) => {
-    await queryInterface.createTable('User', {
+    await queryInterface.createTable('user', {
       id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -38,6 +38,6 @@ export = {
   },
 
   down: async (queryInterface: QueryInterface) => {
-    await queryInterface.dropTable('User');
+    await queryInterface.dropTable('user');
   },
 };
